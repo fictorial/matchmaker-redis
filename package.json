@@ -1,0 +1,32 @@
+{
+  "name": "matchmaker-redis",
+  "version": "1.0.0",
+  "description": "A module that helps users join some kind of social event such as a multiplayer game.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "matchmaking",
+    "matchmaker",
+    "event-planning"
+  ],
+  "author": "Brian Hammond <brian@fictorial.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matchmaker-redis.git"
+  },
+  "homepage": "https://github.com/matchmaker-redis.git",
+  "bugs": {
+    "url": "https://github.com/matchmaker-redis/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.16.4",
+    "shortid": "^2.2.6"
+  },
+  "devDependencies": {
+    "ioredis": "^2.4.0",
+    "debug": "^2.2.0"
+  }
+}
