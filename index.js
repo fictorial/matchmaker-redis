@@ -13,7 +13,7 @@ function createEvent(args) {
   if (_.isUndefined(userId) || _.isUndefined(userAlias))
     return Promise.reject(new Error('user required'))
 
-  const userCount = Math.max(2, parseInt(args.userCount, 10) || 0)
+  const capacity = Math.max(2, parseInt(args.capacity, 10) || 0)
 
   const whitelist = _.uniq(args.whitelist || [])
   const blacklist = _.uniq(args.blacklist || [])
@@ -24,14 +24,14 @@ function createEvent(args) {
 
   const perUserTimeoutSec = Math.max(1, parseInt(args.perUserTimeoutSec, 10) || 30)
 
-  const options = args.options || ''
-  if (!_.isString(options))
-    return Promise.reject(new Error('invalid options'))
+  const params = args.params || ''
+  if (!_.isString(params))
+    return Promise.reject(new Error('invalid params'))
 
   const event = {
     id: shortid(),
-    userCount,
-    options: _.trim(options),
+    capacity,
+    params: _.trim(params),
     whitelist,
     blacklist,
     userIds: [userId],
@@ -39,7 +39,7 @@ function createEvent(args) {
   }
 
   return redis.createEvent(`events/${event.id}`, pendingKey, JSON.stringify(event)).then(() => {
-    const timeout = event.userCount * perUserTimeoutSec * 1000
+    const timeout = event.capacity * perUserTimeoutSec * 1000
     setTimeout(function autoCancelEvent() {
       cancelEvent(userId, event.id).catch(err => {
         // Just eat this error since it's an automatic cancellation or expiration;
@@ -58,19 +58,19 @@ function autojoinEvent(args) {
   if (_.isUndefined(userId) || _.isUndefined(userAlias))
     return Promise.reject(new Error('user required'))
 
-  const userCount = Math.max(2, parseInt(args.userCount, 10) || 0)
+  const capacity = Math.max(2, parseInt(args.capacity, 10) || 0)
 
-  const options = args.options || ''
-  if (!_.isString(options))
-    return Promise.reject(new Error('invalid options'))
+  const params = args.params || ''
+  if (!_.isString(params))
+    return Promise.reject(new Error('invalid params'))
 
   return redis.autojoinEvent(
     pendingKey,
     activeKey,
     userId,
     userAlias,
-    userCount,
-    options,
+    capacity,
+    params,
     _.now() / 1000 | 0)
   .then(json => !json ? null : JSON.parse(json))
 }

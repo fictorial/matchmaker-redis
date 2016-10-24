@@ -72,7 +72,7 @@ function testAutojoinFailThenCreate() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -90,7 +90,7 @@ function testCreateAutoexpires() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -101,7 +101,7 @@ function testCreateAutoexpires() {
       this.createdEvent = event
       debug('created event', this.createdEvent)
 
-      return delay(event.userCount * (perUserTimeoutSec + 1))
+      return delay(event.capacity * (perUserTimeoutSec + 1))
     })
     .then(function () {
       return getEventsFor(user1.id)
@@ -122,7 +122,7 @@ function testCreateThenAutojoin() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -133,12 +133,12 @@ function testCreateThenAutojoin() {
       return autojoinEvent({
         userId: user2.id,
         userAlias: user2.alias,
-        userCount: 2
+        capacity: 2
       })
     })
     .then(function (event) {
+      debug('got event', event)
       if (event.id !== this.createdEvent.id) {
-        debug('got event', event)
         throw new Error('expected to autojoin created event')
       }
 
@@ -154,7 +154,7 @@ function testCreateThenGet() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -180,7 +180,7 @@ function testNoSelfWhitelist() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         whitelist: [user1.id]
       })
@@ -199,7 +199,7 @@ function testNoSelfBlacklist() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         blacklist: [user1.id]
       })
@@ -218,7 +218,7 @@ function testGetWhitelisted() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         whitelist: [user2.id]
       })
@@ -245,7 +245,7 @@ function testAutojoinShouldFailForAlreadyJoinedUser() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -287,7 +287,7 @@ function testNoAutojoinBlacklisted() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         blacklist: [user2.id]
       })
@@ -317,7 +317,7 @@ function testAcceptFlow() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         whitelist: [user2.id]
       })
@@ -344,7 +344,7 @@ function testAcceptShouldFailNotWhitelisted() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         whitelist: [user2.id]
       })
@@ -366,7 +366,7 @@ function testCreateExpireGetShouldBeMissing() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -395,7 +395,7 @@ function testCancelEvent() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -424,7 +424,7 @@ function testAutojoinStartsEvent() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec
       })
     })
@@ -481,7 +481,7 @@ function testAcceptStartsEvent() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
         whitelist: [user2.id]
       })
@@ -538,9 +538,9 @@ function testAutojoinWithNonMatchingOptionsShouldNotFindEvent() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
-        options: user1Options
+        params: user1Options
       })
     })
     .then(function (event) {
@@ -550,7 +550,7 @@ function testAutojoinWithNonMatchingOptionsShouldNotFindEvent() {
       return autojoinEvent({
         userId: user2.id,
         userAlias: user2.alias,
-        options: user2Options
+        params: user2Options
       })
     })
     .then(function (event) {
@@ -572,9 +572,9 @@ function testAutojoinWithMatchingOptionsShouldFindEvent() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: 2,
+        capacity: 2,
         perUserTimeoutSec,
-        options: user1Options
+        params: user1Options
       })
     })
     .then(function (event) {
@@ -584,7 +584,7 @@ function testAutojoinWithMatchingOptionsShouldFindEvent() {
       return autojoinEvent({
         userId: user2.id,
         userAlias: user2.alias,
-        options: user2Options
+        params: user2Options
       })
     })
     .then(function (event) {
@@ -609,9 +609,9 @@ function testCreateLargeEventAndCancelShouldDelist() {
       return createEvent({
         userId: user1.id,
         userAlias: user1.alias,
-        userCount: largeEventUserCount,
+        capacity: largeEventUserCount,
         perUserTimeoutSec,
-        options: largeEventOptions
+        params: largeEventOptions
       })
     })
     .then(function (event) {
@@ -621,8 +621,8 @@ function testCreateLargeEventAndCancelShouldDelist() {
       return autojoinEvent({
         userId: user2.id,
         userAlias: user2.alias,
-        userCount: largeEventUserCount,
-        options: largeEventOptions
+        capacity: largeEventUserCount,
+        params: largeEventOptions
       })
     })
     .then(function (event) {
@@ -634,8 +634,8 @@ function testCreateLargeEventAndCancelShouldDelist() {
       return autojoinEvent({
         userId: user3.id,
         userAlias: user3.alias,
-        userCount: largeEventUserCount,
-        options: largeEventOptions
+        capacity: largeEventUserCount,
+        params: largeEventOptions
       })
     })
     .then(function (event) {

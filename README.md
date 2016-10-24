@@ -4,24 +4,22 @@ multiplayer game.  You may think of this as a matchmaking lobby backend.
 ## Concepts
 
 - Events are created by users.
-- Events have a required user count.
-  - When this many users join the event, the event starts.
-- Events have a whitelist and a blacklist of users.
+- Users *join* events.
+- Events have a required *capacity*.
+  - Events *start* when the event is at capacity.
+- Events have a *whitelist* and a *blacklist* of users.
   - If there's a whitelist, only users on the whitelist may join the event.
   - If there's a blacklist, any user on the blacklist may not join the event.
 - No user may join an event after the event has started.
-- A user may fetch events they are involved with
-  - Created but pending events
-  - Whitelisted but pending events
-  - Joined but pending events
-  - Joined and active/started events
-- The creator of an event may cancel a pending event.
+- A user may fetch events with which they are somehow involved (created, whitelisted, joined)
+- The creator of an event may *cancel* a pending event.
   - Active/started events may not be canceled.
-- The system auto-cancels events that fail to start after some time.
-  - The larger the user count, the more time the event has to start before auto-cancellation.
-- A user may "autojoin" a compatible, pending event.
-  - Compatible with a desired user count and event options.
-- An event's options is encoded as a string and can contain anything.
+- The system *auto-cancels* or *expires* events that fail to start after some time.
+  - The larger the capacity, the more time the event has to start before auto-cancellation.
+- A user may *autojoin* a compatible, pending event.
+  - Same desired *capacity* and event parameters
+- An event's *params* is encoded as a string and can contain anything.
+  - This might encode a desired rules-of-play for a game for instance.
 
 ## Runtime Dependencies
 
@@ -44,8 +42,8 @@ An event looks like this:
 
     event = {
       id: string,
-      userCount: int,
-      options: string,
+      capacity: int,
+      params: string,
       userIds: [string],
       userAliases: [string],
       startedAt: int
@@ -56,20 +54,20 @@ Create an event and wait for others to join it.
     createEvent({
       userId: string,
       userAlias: string,
-      userCount: int,
-      options: string,
+      capacity: int,
+      params: string,
       perUserTimeoutSec: int,
       whitelist: [string],
       blacklist: [string],
     }) -> Promise(event)
 
-Find a pending event with the given options and user count and join it.
+Find a pending event with the given params and user count and join it.
 
     autojoinEvent({
       userId: string,
       userAlias: string,
-      userCount: int,
-      options: string,
+      capacity: int,
+      params: string,
     }) -> Promise(event)
 
 The creator may cancel an event before it auto-expires.
