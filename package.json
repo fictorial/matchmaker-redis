@@ -1,6 +1,6 @@
 {
   "name": "matchmaker-redis",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A module that helps users join some kind of social event such as a multiplayer game.",
   "main": "index.js",
   "scripts": {
